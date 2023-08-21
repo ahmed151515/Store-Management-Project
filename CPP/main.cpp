@@ -3,193 +3,169 @@
 #include <fstream>
 #include <string>
 using namespace std;
-void save(vector<string> &names, vector<double> &prices, vector<int> &quantities)
+// function
+void input_num(double, string);
+void input_num(int, string);
+void get_data();
+void add();
+void print_all();
+void _delete();
+void edit();
+class Product
 {
-  ofstream data;
-  data.open("data_name.txt");
-  for (int i = 0; i < names.size(); i++)
-  {
-    data << names.at(i) << "\n";
-  }
-  data.close();
-  data.open("data_prices.txt");
-  for (int i = 0; i < prices.size(); i++)
-  {
-    data << prices.at(i) << "\n";
-  }
-  data.close();
-  data.open("data_quantities.txt");
-  for (int i = 0; i < quantities.size(); i++)
-  {
-    data << quantities.at(i) << "\n";
-  }
-  data.close();
-}
-void load(vector<string> &names, vector<double> &prices, vector<int> &quantities)
-{
-  string name_l;
-  double price_l;
-  int quantities_l;
-  ifstream data;
+    double price;
+    string name;
+    int q;
 
-  data.open("data_name.txt");
-  if (data.is_open())
-  {
-    while (data >> name_l)
+public:
+    Product() {}
+    Product(string name_, double price_, int q_) : name(name_), price(price_), q(q_)
     {
-      names.push_back(name_l);
     }
-  }
-  data.close();
-  data.open("data_prices.txt");
-  if (data.is_open())
-  {
-    while (data >> price_l)
+    
+    ~Product() {}
+    void print()
     {
-      prices.push_back(price_l);
+        cout << "name: " << name << endl;
+        cout << "price: " << price << endl;
+        cout << "q: " << q << endl;
     }
-  }
-  data.close();
-  data.open("data_quantities.txt");
-  if (data.is_open())
-  {
-    while (data >> quantities_l)
+
+    void edit_elment(string name_new, double price_new, int q_new)
     {
-      quantities.push_back(quantities_l);
+        name = name_new;
+        price = price_new;
+        q = q_new;
     }
-  }
-  data.close();
-}
-void add(vector<string> &names, vector<double> &prices, vector<int> &quantities)
+    void delete_elment()
+    {
+        delete this;
+    }
+};
+vector<Product *> list_of_Product;
+void get_data(string &name, double &price, int &q)
 {
-  int count = 0, quantity;
-  string name;
-  double price;
-  cout << "How mnay products you want add\n";
-  cin >> count;
-  cin.ignore();
-  for (int i = 0; i < count; i++)
-  {
-    cout << "write name of product\n";
+    cout << "name: ";
     getline(cin, name);
-    names.push_back(name);
-    cout << "write price of product\n";
-    cin >> price;
-    prices.push_back(price);
-    cout << "write quantity of product\n";
-    cin >> quantity;
-    cin.ignore();
-    quantities.push_back(quantity);
-  }
+    cin.ignore('\n');
+    input_num(price, "enter price: ");
+    input_num(q, "enter q: ");
 }
-void show(vector<string> names, vector<double> prices, vector<int> quantities)
+void add()
 {
-  for (int i = 0; i < names.size(); i++)
-  {
-    cout << "product [" << i << "]\nname: " << names.at(i)
-         << "\nprice: " << prices.at(i) << "\nquantity: " << quantities.at(i) << "\n\n";
-  }
+    string name;
+    double price;
+    int q;
+    get_data(name, price, q);
+    Product *tmp = new Product(name,price,q);
+    list_of_Product.push_back(tmp);
 }
-void Delete(vector<string> &names, vector<double> &prices, vector<int> &quantities)
+void print_all()
 {
-  show(names, prices, quantities);
-  int index;
-  cout << "what the index you want delete\n";
-  cin >> index;
-  if (index >= names.size())
-    cout << "Wrong index\n";
-  else
-  {
-    for (int i = index; i <= index; i++)
+    if (list_of_Product.size() < 1)
     {
-      names.erase(names.begin() + i, names.begin() + i + 1);
-      prices.erase(prices.begin() + i, prices.begin() + i + 1);
-      quantities.erase(quantities.begin() + i, quantities.begin() + i + 1);
+        cout << "add Product first\n";
+        return;
     }
-    cout << "Deleted successfully\n";
-  }
-}
-void edit(vector<string> &names, vector<double> &prices, vector<int> &quantities)
-{
-  show(names, prices, quantities);
-  int index, quantity;
-  string name;
-  double price;
-  cout << "what the index you want edit\n";
-  cin >> index;
-  cin.ignore();
-  if (index >= names.size())
-    cout << "Wrong index\n";
-  else
-  {
-    for (int i = 0; i < 1; i++)
+    for (int index = 0; index < list_of_Product.size(); index++)
     {
-      cout << "write new name of product\n";
-      getline(cin, name);
-      names.at(index) = name;
-      cout << "write new price of product\n";
-      cin >> price;
-      prices.at(index) = price;
-      cout << "write new quantity of product\n";
-      cin >> quantity;
-      quantities.at(index) = quantity;
-      cin.ignore();
+        cout << "[" << index << "]\n";
+        list_of_Product[index]->print();
     }
-    cout << "Edited successfully\n";
-  }
+}
+void _delete()
+{
+    if (list_of_Product.size() < 1)
+    {
+        cout << "add Product first\n";
+        return;
+    }
+    print_all();
+    int index;
+    input_num(index, "choice number of product");
+    list_of_Product[index]->delete_elment();
+    list_of_Product.erase(list_of_Product.begin() + index);
+}
+void edit()
+{
+    if (list_of_Product.size() < 1)
+    {
+        cout << "add Product first\n";
+        return;
+    }
+    print_all();
+    int index;
+    input_num(index, "choice number of product");
+    string name;
+    double price;
+    int q;
+    get_data(name, price, q);
+    list_of_Product[index]->edit_elment(name, price, q);
 }
 int main()
 {
-  vector<string> name;
-  vector<double> price;
-  vector<int> quantity;
-  load(name, price, quantity);
-  int choice = 0;
-  while (choice != 5)
-  {
-    cout << "Select Choose\n";
-    cout << "[1] add\n";
-    cout << "[2] show\n";
-    cout << "[3] delete\n";
-    cout << "[4] edit\n";
-    cout << "[5] exit\n";
-    cin >> choice;
-    switch (choice)
+    int choice = 0;
+    while (choice != 5)
     {
-    case 1:
-      add(name, price, quantity);
-      break;
-    case 2:
-      if (name.empty() && price.empty() && quantity.empty())
-        cout << "Please add products first\n";
-      else
-        show(name, price, quantity);
-      break;
-    case 3:
-      if (name.empty() && price.empty() && quantity.empty())
-        cout << "Please add products first\n";
-      else
-      {
-        Delete(name, price, quantity);
-      }
+        cout << "[1] add\n[2] show\n[3] delete\n[4] edit\n[5] exit\n";
+        cin >> choice;
+        switch (choice)
+        {
+        case 1:
+            add();
+            break;
+        case 2:
+            print_all();
+            break;
+        case 3:
+            _delete();
+            break;
+        case 4:
+            edit();
+            break;
 
-      break;
-    case 4:
-      if (name.empty() && price.empty() && quantity.empty())
-        cout << "Please add products first\n";
-      else
-      {
-        edit(name, price, quantity);
-      }
-
-      break;
-    case 5:
-      break;
-    default:
-      cout << "Wrong choice\n";
+        default:
+            cout << (choice != 5 ? "wrong choice" : "");
+            break;
+        }
     }
+    return 0;
+}
+void input_num(double y, string msg = "")
+{
+    try
+    {
+        cout << msg;
+        cin >> y;
+        if (cin.fail())
+        {
+            throw exception();
+        }
     }
-  save(name, price, quantity);
-
-  return 0;
+    catch (exception e)
+    {
+        cerr << "wrong value | number only\n";
+        cin.clear();
+        cin.ignore(10000, '\n');
+        input_num(y);
+    }
+}
+void input_num(int x, string msg = "")
+{
+    try
+    {
+        cout << msg;
+        cin >> x;
+        if (cin.fail())
+        {
+            throw exception();
+        }
+    }
+    catch (exception e)
+    {
+        cerr << "wrong value | number only\n";
+        cin.clear();
+        cin.ignore(10000, '\n');
+        input_num(x);
+    }
 }
