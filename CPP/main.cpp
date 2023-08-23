@@ -4,13 +4,14 @@
 #include <string>
 using namespace std;
 // function
-void input_num(double, string);
-void input_num(int, string);
-void get_data();
+void input_num(double &, string);
+void input_num(int &, string);
+void get_data(string &, double &, int &);
 void add();
 void print_all();
 void _delete();
 void edit();
+
 class Product
 {
     double price;
@@ -18,11 +19,10 @@ class Product
     int q;
 
 public:
-    Product() {}
     Product(string name_, double price_, int q_) : name(name_), price(price_), q(q_)
     {
     }
-    
+
     ~Product() {}
     void print()
     {
@@ -45,10 +45,12 @@ public:
 vector<Product *> list_of_Product;
 void get_data(string &name, double &price, int &q)
 {
+    cin.ignore();
     cout << "name: ";
     getline(cin, name);
-    cin.ignore('\n');
+
     input_num(price, "enter price: ");
+
     input_num(q, "enter q: ");
 }
 void add()
@@ -56,8 +58,11 @@ void add()
     string name;
     double price;
     int q;
+
     get_data(name, price, q);
-    Product *tmp = new Product(name,price,q);
+
+    Product *tmp = new Product(name, price, q);
+
     list_of_Product.push_back(tmp);
 }
 void print_all()
@@ -81,8 +86,11 @@ void _delete()
         return;
     }
     print_all();
+
     int index;
+
     input_num(index, "choice number of product");
+
     list_of_Product[index]->delete_elment();
     list_of_Product.erase(list_of_Product.begin() + index);
 }
@@ -93,13 +101,19 @@ void edit()
         cout << "add Product first\n";
         return;
     }
+
     print_all();
+
     int index;
+
     input_num(index, "choice number of product");
+
     string name;
     double price;
     int q;
+
     get_data(name, price, q);
+
     list_of_Product[index]->edit_elment(name, price, q);
 }
 int main()
@@ -131,7 +145,7 @@ int main()
     }
     return 0;
 }
-void input_num(double y, string msg = "")
+void input_num(double &y, string msg = "")
 {
     try
     {
@@ -150,7 +164,7 @@ void input_num(double y, string msg = "")
         input_num(y);
     }
 }
-void input_num(int x, string msg = "")
+void input_num(int &x, string msg = "")
 {
     try
     {
