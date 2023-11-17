@@ -7,7 +7,7 @@ using namespace std;
 // function
 template <class type>
 void input_num(type &x, string msg);
-void get_data(string &, double &, int &);
+void set_data(string &, double &, int &);
 void add();
 void print_all();
 void _delete();
@@ -19,11 +19,12 @@ class Product
 {
     string name;
     double price;
-    int q;
+    int quantity;
 
 public:
     Product(){};
-    Product(string name_, double price_, int q_) : name(name_), price(price_), q(q_)
+    Product(string name_, double price_, int quantity_) : name(name_), price(price_),
+                                                          quantity(quantity_)
     {
     }
 
@@ -32,34 +33,35 @@ public:
     {
         cout << "name: " << name << endl;
         cout << "price: " << price << endl;
-        cout << "q: " << q << endl;
+        cout << "quantity: " << quantity << endl;
     }
 
-    void edit_elment(string name_new, double price_new, int q_new)
+    void edit_elment(string name_new, double price_new, int quantity_new)
     {
         name = name_new;
         price = price_new;
-        q = q_new;
+        quantity = quantity_new;
     }
-    
+
     void save(ofstream &file)
     {
         file << name << endl
              << price << endl
-             << q << endl;
+             << quantity << endl;
     }
     void load(ifstream &file)
     {
-        file >> name >> price >> q;
+        file >> name >> price >> quantity;
     }
 };
+
 vector<Product *> list_of_Product;
 
 int main()
 {
     load();
-    int choice = 0;
-    while (choice != 5)
+    int choice;
+    do
     {
         cout << "[1] add\n[2] show\n[3] delete\n[4] edit\n[5] exit\n";
         cin >> choice;
@@ -82,11 +84,17 @@ int main()
             cout << (choice != 5 ? "wrong choice" : "");
             break;
         }
-    }
+    } while (choice != 5);
     save();
     return 0;
 }
-void get_data(string &name, double &price, int &q)
+/**
+ * set_data - from user
+ * @name: name of product
+ * @price: price of product
+ * @quantity: quantity of product
+ */
+void set_data(string &name, double &price, int &quantity)
 {
     cin.ignore();
     cout << "name: ";
@@ -94,20 +102,26 @@ void get_data(string &name, double &price, int &q)
 
     input_num(price, "enter price: ");
 
-    input_num(q, "enter q: ");
+    input_num(quantity, "enter quantity: ");
 }
+/**
+ * add - add one product to list
+ */
 void add()
 {
     string name;
     double price;
-    int q;
+    int quantity;
 
-    get_data(name, price, q);
+    set_data(name, price, quantity);
 
-    Product *tmp = new Product(name, price, q);
+    Product *tmp = new Product(name, price, quantity);
 
     list_of_Product.push_back(tmp);
 }
+/**
+ * print_all - print product from list
+ */
 void print_all()
 {
     if (list_of_Product.size() < 1)
@@ -121,6 +135,9 @@ void print_all()
         list_of_Product[index]->print();
     }
 }
+/**
+ * _delete - delete product from list
+ */
 void _delete()
 {
     if (list_of_Product.size() < 1)
@@ -137,6 +154,9 @@ void _delete()
     delete list_of_Product[index];
     list_of_Product.erase(list_of_Product.begin() + index);
 }
+/**
+ * edit - edit product from list
+ */
 void edit()
 {
     if (list_of_Product.size() < 1)
@@ -153,18 +173,24 @@ void edit()
 
     string name;
     double price;
-    int q;
+    int quantity;
 
-    get_data(name, price, q);
+    set_data(name, price, quantity);
 
-    list_of_Product[index]->edit_elment(name, price, q);
+    list_of_Product[index]->edit_elment(name, price, quantity);
 }
+/**
+ * input_num -  input number from user
+ * @var: variable
+ * @msg: text to user
+ * I use call by refraence
+ */
 template <class type>
-void input_num(type &x, string msg)
+void input_num(type &var, string msg)
 {
     cout << msg;
 
-    while (!(cin >> x))
+    while (!(cin >> var))
     {
         cerr << "wrong value | number only\n";
         cin.clear();
@@ -172,7 +198,9 @@ void input_num(type &x, string msg)
         cout << msg;
     }
 }
-
+/**
+ * save - save product from list in text file
+ */
 void save()
 {
     ofstream file;
@@ -183,6 +211,9 @@ void save()
     }
     file.close();
 }
+/**
+ * load - load product from text file to text file
+ */
 void load()
 {
     ifstream file;
