@@ -5,6 +5,10 @@
     "vector": "cpp",
     "istream": "cpp",
     "iostream": "cpp",
-    "*.tcc": "cpp"
+    "*.tcc": "cpp",
+    "string": "cpp",
+    "iosfwd": "cpp",
+    "typeinfo": "cpp",
+    "atomic": "cpp"
   }
 }
